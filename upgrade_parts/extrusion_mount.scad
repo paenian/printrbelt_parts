@@ -2,9 +2,58 @@ in = 25.4;
 
 %extrusion();
 
-extrusion_mount();
+//mirror([0,0,1])
+rambo_mount();
 
-module extrusion_mount(length = in){
+module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, $fn=36){
+    slot_width = in*9/16;
+    wall = 4;
+    nub_rad = 6;
+    screw_rad = 1.25;
+    difference(){
+        union(){
+            //slot tabs
+            intersection(){
+                union(){
+                    translate([in/2,0,0]) cube([in, slot_width, length], center=true);
+                    rotate([0,0,90]) translate([in/2,0,0]) cube([in, slot_width, length], center=true);
+                }
+                rotate([0,0,45]) translate([in/2,0,0]) cube([in, in, length], center=true);
+            }
+            
+            //board rest
+            translate([0,lift,0]) rotate([0,0,angle]) translate([0,-in*1/2,0]) cube([wall, length, length], center=true);
+            
+            //board nub
+            translate([0,lift,0]) rotate([0,0,angle]) translate([wall/2,-in*1/2,-length/2+nub_rad-1]) {
+                rotate([0,90,0]) cylinder(r=nub_rad, h=wall, center=true);
+            }
+            
+            //join the board rest and the nub
+            difference(){
+                hull(){
+                    translate([0,lift,0]) rotate([0,0,angle]) translate([0,-in*1/2,0]) cube([wall, length, length], center=true);
+                    rotate([0,0,45]) translate([in/2,0,0]) cube([in, in, length], center=true);
+                }
+                hull() extrusion(slop = 1);
+            }
+        }
+        extrusion(slop = .75);
+        
+        //screwhole
+        translate([0,lift,0]) rotate([0,0,angle]) translate([wall,-in*1/2,-length/2+nub_rad-1]) {
+            rotate([0,90,0]) cylinder(r=screw_rad, h=wall*5, center=true);
+        }
+        
+        //flatten the bottom
+        translate([0,0,-50-length/2]) cube([100,100,100], center=true);
+        
+        //flatten the back
+        translate([50+length*3/4,0,0]) cube([100,100,100], center=true);
+    }
+}
+
+module extrusion_lug(length = in){
     slot_width = in*9/16;
     difference(){
         union(){
