@@ -2,13 +2,18 @@ in = 25.4;
 
 %extrusion();
 
-//mirror([0,0,1])
-rambo_mount();
+$fn=72;
 
-module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, $fn=36){
+//mirror([0,0,1])
+//rambo_mount();
+
+//this is for the pi... it has less clearance around its holes, but otherwise identical
+rambo_mount(nub_rad = 4);
+
+module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, nub_rad = 6){
     slot_width = in*9/16;
     wall = 4;
-    nub_rad = 6;
+    
     screw_rad = 1.25;
     difference(){
         union(){
@@ -39,6 +44,8 @@ module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, $fn=36){
             }
         }
         extrusion(slop = .75);
+        
+        cylinder(r=5, h=50, center=true);
         
         //screwhole
         translate([0,lift,0]) rotate([0,0,angle]) translate([wall,-in*1/2,-length/2+nub_rad-1]) {
