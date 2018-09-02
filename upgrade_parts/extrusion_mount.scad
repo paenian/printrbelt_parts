@@ -1,12 +1,76 @@
 in = 25.4;
 
-%extrusion();
+//%extrusion();
 
 //mirror([0,0,1])
-rambo_mount();
+//rambo_mount();
+8mm_mount();
+
+//spring_mount();
+
+rod_rad = 4.15;
+screw_rad = 1.8;
+wall = 3;
+
+$fn=36;
+
+module 8mm_mount(){
+    screw_sep = 15;
+    difference(){
+        union(){
+            //rod mount
+            translate([0,0,rod_rad]) rotate([90,0,0]) hull() {
+                cylinder(r=rod_rad+wall, h=in-wall, center=true);
+                cylinder(r=rod_rad+wall/2, h=in, center=true);
+            }
+            
+            //screwholes
+            hull(){
+                for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,0]){
+                    cylinder(r=screw_rad+wall, h=wall*3-1);
+                    cylinder(r=screw_rad+wall-.5, h=wall*3);
+                }
+                for(i=[0,1]) mirror([0,i,0]) translate([0,screw_sep/2,0]){
+                    cylinder(r=screw_rad+wall, h=wall);
+                }
+            }
+        }
+        
+        //screwholes
+        for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,wall*2.75]){
+            cylinder(r=screw_rad*2, h=wall*2, $fn=36);
+            cylinder(r=screw_rad, h=wall*8, center=true, $fn=36);
+        }
+        
+        //rod
+        translate([0,0,rod_rad]) rotate([90,0,0]) cylinder(r=rod_rad, h=in+1, center=true);
+        
+        //smooth the bottom
+        translate([0,0,-50+.2]) cube([100,100,100], center=true);
+    }
+}
+
+
+slot_width = in*9/16;
+
+module spring_mount(height=7){
+    rotate([90,0,0]) difference(){
+        union(){
+            intersection(){
+                rotate([90,0,0]) hull() {
+                    cylinder(r=slot_width/2,h=height/2+in/2);
+                    cylinder(r=slot_width*.333,h=height+in/2);
+                }
+                translate([0,0,-25]) rotate([0,0,-135]) cube([50,50,50]);
+                translate([-25,-5,-25]) rotate([0,0,-90]) cube([50,50,50]);
+            }
+        }
+        extrusion(slop = 1);
+        rotate([90,0,0]) cylinder(r1=screw_rad-.375, r2=screw_rad-.125, h=height+in/2+.1); 
+    }
+}
 
 module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, $fn=36){
-    slot_width = in*9/16;
     wall = 4;
     nub_rad = 6;
     screw_rad = 1.25;
