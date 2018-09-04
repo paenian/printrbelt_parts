@@ -4,14 +4,13 @@ in = 25.4;
 
 $fn=72;
 
-//mirror([0,0,1])
+//translate([25,0,0]) mirror([0,0,1])
 //rambo_mount();
 
 //this is for the pi... it has less clearance around its holes, but otherwise identical
-//rambo_mount(nub_rad = 4);
+mirror([0,0,1]) rambo_mount(nub_rad = 4, length = in/2);
 
-rotate([0,90,0]) 
-8mm_mount();
+//rotate([0,90,0]) 8mm_mount();
 
 //spring_mount();
 
@@ -131,7 +130,7 @@ module rambo_mount(angle = 90-35, lift = in*2, length = in*7/8, nub_rad = 6){
         translate([0,0,-50-length/2]) cube([100,100,100], center=true);
         
         //flatten the back
-        translate([50+length*3/4,0,0]) cube([100,100,100], center=true);
+        translate([50+in*3/4,0,0]) cube([100,100,100], center=true);
     }
 }
 
