@@ -2,14 +2,14 @@ in = 25.4;
 
 $fn=72;
 
-roller_mount();
+mirror([0,0,1]) roller_mount();
 
 slop = .25;
 
-roller_rad = 43/2;
-bearing_rad = 22/2-.5;
+roller_rad = 43/2-.2;
+bearing_rad = 22/2+.125;
 bearing_inset = in;
-bearing_thick = 8;
+bearing_thick = 7;
 
 wall = 2;
 
@@ -24,14 +24,14 @@ module roller_mount(){
             
             translate([0,0,bearing_inset]) hull(){
                 cylinder(r=roller_rad, h=wall, center=true);
-                cylinder(r=roller_rad-slop, h=wall*2, center=true);
+                cylinder(r=roller_rad-slop*2, h=wall*2, center=true);
             }
         }
         
         //approach the bearing
         translate([0,0,-.1]) cylinder(r1=bearing_rad+wall*2, r2=bearing_rad+wall, h=bearing_inset-bearing_thick+.2);
         //mount the bearing
-        translate([0,0,-.1]) cylinder(r=bearing_rad, h=bearing_inset+.1);
+        translate([0,0,-.1]) cylinder(r2=bearing_rad, r1=bearing_rad+slop/2, h=bearing_inset+.1);
         //center through hole
         translate([0,0,-.1]) cylinder(r=bearing_rad-wall, h=bearing_inset+.2+wall);  
     }
