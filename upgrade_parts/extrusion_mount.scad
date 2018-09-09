@@ -8,9 +8,10 @@ $fn=72;
 //rambo_mount();
 
 //this is for the pi... it has less clearance around its holes, but otherwise identical
-mirror([0,0,1]) rambo_mount(nub_rad = 4, length = in/2);
+//mirror([0,0,1]) rambo_mount(nub_rad = 4, length = in/2);
 
-//rotate([0,90,0]) 8mm_mount();
+//translate([20,0,0]) rotate([0,90,0]) rod_mount(rod_rad = 5.25, extrusion=true);
+rod_mount(rod_rad = 5.25, extrusion=false);
 
 //spring_mount();
 
@@ -20,19 +21,20 @@ wall = 3;
 
 $fn=36;
 
-module 8mm_mount(){
+module rod_mount(extrusion=false){
     screw_sep = 15;
     difference(){
         union(){
             //rod mount
             hull() {
                 translate([0,0,rod_rad]) rotate([90,0,0]) {
-                    cylinder(r=rod_rad+wall, h=in-wall, center=true);
-                    cylinder(r=rod_rad+wall/2, h=in, center=true);
+                    cylinder(r=rod_rad+wall, h=in, center=true);
+                    cylinder(r=rod_rad+wall-.5, h=in+wall, center=true);
                 }
                 
-                translate([0,0,-rod_rad/2]) rotate([0,90,0]) {
-                    cylinder(r=rod_rad+wall, h=screw_sep+wall*2.75, center=true);
+                if(extrusion == true)
+                    translate([0,0,-rod_rad/2]) rotate([0,90,0]) {
+                    cylinder(r=7, h=screw_sep+wall*2.75, center=true);
                 }
             }
             
@@ -48,7 +50,11 @@ module 8mm_mount(){
             }
         }
         
-        translate([0,0,-in/2]) rotate([0,90,0]) extrusion(slop = 1);
+        if(extrusion == true){
+            translate([0,0,-in/2]) rotate([0,90,0]) extrusion(slop = 1);
+        }else{
+            translate([0,0,-in/2]) cube([in*5,in*5,in], center=true);
+        }
         
         //screwholes
         for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,wall*2.75]){
@@ -57,7 +63,11 @@ module 8mm_mount(){
         }
         
         //rod
-        translate([0,0,rod_rad+.5]) rotate([90,0,0]) rotate([0,0,180]) cap_cylinder(r=rod_rad, h=in+1, center=true);
+        if(extrusion == true){
+            translate([0,0,rod_rad]) rotate([90,0,0]) rotate([0,0,180]) cap_cylinder(r=rod_rad, h=in*2, center=true);
+        }else{
+            translate([0,0,rod_rad]) rotate([90,0,0]) rotate([0,0,90]) cap_cylinder(r=rod_rad, h=in*2, center=true);
+        }
         
         //smooth the top and bottom
         for(i=[0,1]) mirror([i,0,0]) translate([50+screw_sep/2+wall*2.75/2,0,0]) cube([100,100,100], center=true);
