@@ -10,8 +10,8 @@ $fn=72;
 //this is for the pi... it has less clearance around its holes, but otherwise identical
 //mirror([0,0,1]) rambo_mount(nub_rad = 4, length = in/2);
 
-//translate([20,0,0]) rotate([0,90,0]) rod_mount(rod_rad = 5.25, extrusion=true);
-rod_mount(rod_rad = 5.25, extrusion=false);
+translate([20,0,0]) rotate([0,90,0]) rod_mount(rod_rad = 5.25, extrusion=true);
+//rod_mount(rod_rad = 5.25, extrusion=false);
 
 //spring_mount();
 
@@ -33,8 +33,8 @@ module rod_mount(extrusion=false){
                 }
                 
                 if(extrusion == true)
-                    translate([0,0,-rod_rad/2]) rotate([0,90,0]) {
-                    cylinder(r=7, h=screw_sep+wall*2.75, center=true);
+                    translate([0,0,-rod_rad/2+4]) rotate([0,90,0]) {
+                    cylinder(r=10, h=screw_sep+wall*2.75, center=true);
                 }
             }
             
