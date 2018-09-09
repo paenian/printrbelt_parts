@@ -14,7 +14,7 @@ include <MCAD/teardrop.scad>
 /* Set to 1 to render gears as cylinders instead,
  * Will speed up rendering for experimenting with decorations.
  */
-debug = 1;
+debug = 0;
 
 /* Set to 0 to render the gears interlocked,
  * or 1 to render them seperately for easy printing.
@@ -152,7 +152,7 @@ module mirrordupe(p) {
     mirror(p) children();
 }
 
-module chamfered_herring_gear(height, chamfer_gradient, teeth_twist, number_of_teeth, circular_pitch) {
+module chamfered_herring_gear(height=10, chamfer_gradient=tan(45), teeth_twist=1, number_of_teeth, circular_pitch) {
     radius = gear_radius(number_of_teeth=number_of_teeth, circular_pitch=circular_pitch);
     outer_radius = gear_outer_radius(number_of_teeth=number_of_teeth, circular_pitch=circular_pitch);
     twist = 360 * teeth_twist / number_of_teeth / 2;
@@ -192,7 +192,7 @@ module hole(h,r,$fn=8,rot=0) {
         cylinder(h=h, r=r / cos(180 / $fn), $fn=$fn);
 }
 
-module gear1() {
+module gear1(chamfer_gradient = tan(45)) {
     //Variables
     radius = gear_radius(gear1_teeth, circular_pitch);
     inner_radius = gear_inner_radius(gear1_teeth, circular_pitch);
@@ -230,7 +230,10 @@ module gear1() {
         }
         //Setscrew insertion cube
         translate([-setnut_distance-gear1_setnut_height,-gear1_setnut_width/2,-gear1_base_height-epsilon])
-            cube([gear1_setnut_height, gear1_setnut_width, gear1_base_height/2 + epsilon]);
+            hull(){
+                cube([gear1_setnut_height, gear1_setnut_width, gear1_base_height/2 + epsilon]);
+                translate([-.25,-.25,-5]) cube([gear1_setnut_height+.25, gear1_setnut_width+.5, gear1_base_height/2 + epsilon]);
+            }
         
     }
     
