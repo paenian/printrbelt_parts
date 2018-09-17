@@ -10,10 +10,14 @@ $fn=72;
 //this is for the pi... it has less clearance around its holes, but otherwise identical
 //mirror([0,0,1]) rambo_mount(nub_rad = 4, length = in/2);
 
-translate([20,0,0]) rotate([0,90,0]) rod_mount(rod_rad = 5.25, extrusion=true);
+//translate([20,0,0]) rotate([0,90,0]) rod_mount(rod_rad = 5.25, extrusion=true);
 //rod_mount(rod_rad = 5.25, extrusion=false);
 
 //spring_mount();
+
+//rambo_mount(nub_rad = 4, length = in/2);
+
+pi_camera_mount(nub_rad = 4, length = in/2);
 
 rod_rad = 4.25;
 screw_rad = 1.8;
@@ -91,6 +95,63 @@ module spring_mount(height=7){
         }
         extrusion(slop = 1);
         rotate([90,0,0]) cylinder(r1=screw_rad-.375, r2=screw_rad-.125, h=height+in/2+.1); 
+    }
+}
+
+module pi_camera_mount(angle = 90, lift = in*3, ball_rad = 15/2, ball_slop = .25){
+    slot_width = in*9/16;
+    wall = 4;
+    length = ball_rad*2+wall*2;
+    
+    screw_rad = 1.25;
+    difference(){
+        union(){
+            //slot tabs
+            intersection(){
+                union(){
+                    translate([in/2,0,0]) cube([in, slot_width, length], center=true);
+                    rotate([0,0,90]) translate([in/2,0,0]) cube([in, slot_width, length], center=true);
+                }
+                rotate([0,0,45]) translate([in/2,0,0]) cube([in, in, length], center=true);
+            }
+            
+            //join the board rest and the nub
+            difference(){
+                hull(){
+                    translate([0,lift,0]) rotate([0,0,angle]) translate([0,-in/2-wall*1.6+length/2,0]) rotate([90,0,0]) cylinder(r=length/2, h=length-wall, center=true);
+                    translate([0,lift,0]) rotate([0,0,angle]) translate([0,-in/2-wall*1.6+length/2,0]) rotate([90,0,0]) cylinder(r=length/2-wall/2, h=length, center=true);
+                    
+                    rotate([0,0,45]) translate([in/2,0,0]) cube([in, in, length], center=true);
+                }
+                hull() extrusion(slop = 1);
+            }
+        }
+        extrusion(slop = .75);
+        
+        cylinder(r=5, h=50, center=true);
+        
+        //ball recess
+        translate([0,lift-in*.666,0]) rotate([0,0,angle]) hull(){
+            translate([0,-in/2-wall*1.5+length/2,0])  cylinder(r=ball_rad-wall/2, h=length+1, center=true);
+            translate([in*1.25,-in/2-wall*1.5+length/2,0])  cylinder(r=ball_rad-wall/2, h=length+1, center=true);
+        }
+        
+        //ball detent
+        translate([0,lift+in*.125,0]) rotate([0,0,angle]) hull(){
+            translate([0,-in/2-wall*1.5+length/2,0])  sphere(r=ball_rad-ball_slop);
+        }
+        
+        //ball entry
+        translate([0,lift+in*.125,0]) rotate([0,0,angle]) hull(){
+            translate([0,-in/2-wall*1.5+length/2,0])  sphere(r=ball_rad-ball_slop*4);
+            translate([in,-in/2-wall*1.5+length/2,0])  sphere(r=ball_rad-ball_slop*1);
+        }
+        
+        //flatten the bottom
+        translate([0,0,-50-length/2+.25]) cube([200,200,100], center=true);
+        
+        //flatten the back
+        translate([50+in*3/4,0,0]) cube([100,200,200], center=true);
     }
 }
 

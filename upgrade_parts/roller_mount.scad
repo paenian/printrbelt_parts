@@ -4,7 +4,7 @@ in = 25.4;
 $fn=72;
 
 //mirror([0,0,1]) roller_mount();
-//rotate([180,0,0]) roller_gear_mount();
+rotate([180,0,0]) roller_gear_mount();
 rotate([180,0,0]) motor_gear();
 
 
