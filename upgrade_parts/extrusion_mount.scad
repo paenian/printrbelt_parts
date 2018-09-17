@@ -17,8 +17,10 @@ $fn=72;
 
 //rambo_mount(nub_rad = 4, length = in/2);
 
-pi_camera_mount(nub_rad = 4, length = in/2);
+//pi_camera_mount(nub_rad = 4, length = in/2);
+pi_camera_ball();
 
+ball_rad = 15/2;
 rod_rad = 4.25;
 screw_rad = 1.8;
 wall = 3;
@@ -98,7 +100,46 @@ module spring_mount(height=7){
     }
 }
 
-module pi_camera_mount(angle = 90, lift = in*3, ball_rad = 15/2, ball_slop = .25){
+module pi_camera_ball(ball_lift=29){
+    cam_x = 27;
+    cam_y = 5;
+    cam_z = 25;
+    
+    wall = 2;
+    min_rad = 1;
+    
+    lens_x = 10;
+    lens_z = 5;
+    difference(){
+        union(){
+            minkowski(){
+                cube([cam_x+wall*2-min_rad*2, cam_y+wall*2-min_rad*2, cam_z+wall*2-min_rad*2], center=true);
+                sphere(r=min_rad, $fn=5);
+            }
+            
+            //ball
+            translate([0,0,ball_lift]) sphere(r=ball_rad, $fn=90);
+            hull(){
+                translate([0,0,ball_lift]) sphere(r=ball_rad-wall);
+                sphere(r=cam_y/2);
+            }
+        }
+        
+        //camera hole
+        hull(){
+            cube([cam_x, cam_y, cam_z], center=true);
+            translate([0,0,-cam_z/2]) cube([cam_x, cam_y, cam_z], center=true);
+        }
+        
+        //lens hole
+        translate([0,-cam_y/2,0]) hull(){
+            cube([lens_x, cam_y, lens_z], center=true);
+            translate([0,0,-cam_z/2]) cube([lens_x, cam_y, lens_z], center=true);
+        }
+    }
+}
+
+module pi_camera_mount(angle = 90, lift = in*3, ball_slop = .25){
     slot_width = in*9/16;
     wall = 4;
     length = ball_rad*2+wall*2;
