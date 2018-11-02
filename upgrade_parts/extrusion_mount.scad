@@ -22,7 +22,9 @@ $fn=72;
 
 //fan_mount();
 
-exit_ramp();
+//exit_ramp();
+
+t_nut_m5();
 
 ball_rad = 15/2;
 rod_rad = 4.25;
@@ -32,6 +34,29 @@ wall = 3;
 roller_rad = 43/2+1;
 
 $fn=36;
+
+module t_nut_m5(){
+    length = 17;
+    m5_nut_rad = 9.25/2;
+    m5_rad = 5.3/2;
+    m5_height = 4;
+    difference(){
+        union(){
+            intersection(){
+                translate([0,0,-length/2]) rotate([0,0,-135]) cube([20,20,length]);
+                translate([-25,-5,-length/2]) rotate([0,0,-90]) cube([7,50,length]);
+            }
+        }
+        
+        extrusion(slop = 1);
+        
+        //m5 nut
+        translate([0,-5,0]) rotate([90,0,0]) rotate([0,0,30])  {
+            cylinder(r1=m5_nut_rad+.25, r2=m5_nut_rad, h=5, $fn=6);
+            cylinder(r=m5_rad, h=30, center=true);
+        }
+    }
+}
 
 //part that slots into the extrusion and guides parts off the bed
 module exit_ramp(height = 19, length=33, roller_offset = 51){
