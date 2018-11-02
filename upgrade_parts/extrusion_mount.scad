@@ -52,7 +52,7 @@ module t_nut_m5(){
         
         //m5 nut
         translate([0,-5,0]) rotate([90,0,0]) rotate([0,0,30])  {
-            cylinder(r1=m5_nut_rad+.25, r2=m5_nut_rad, h=5, $fn=6);
+            cylinder(r1=m5_nut_rad+.25, r2=m5_nut_rad, h=4, $fn=6);
             cylinder(r=m5_rad, h=30, center=true);
         }
     }
