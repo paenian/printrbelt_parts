@@ -18,14 +18,77 @@ $fn=72;
 //rambo_mount(nub_rad = 4, length = in/2);
 
 //pi_camera_mount(nub_rad = 4, length = in/2);
-pi_camera_ball();
+//pi_camera_ball();
+
+//fan_mount();
+
+exit_ramp();
 
 ball_rad = 15/2;
 rod_rad = 4.25;
 screw_rad = 1.8;
+nut_rad = 6.25/2;
 wall = 3;
+roller_rad = 43/2+1;
 
 $fn=36;
+
+//part that slots into the extrusion and guides parts off the bed
+module exit_ramp(height = 19, length=33, roller_offset = 51){
+    rotate([90,0,0]) difference(){
+        hull(){
+            intersection(){
+                translate([0,0,-length/2]) rotate([0,0,-135]) cube([20,20,length]);
+                translate([-25,-5,-length/2]) rotate([0,0,-90]) cube([20,50,length]);
+            }
+            translate([roller_offset-5,-5-in/2-height,-length/2]) rotate([0,0,45]) cube([10,10,length]);
+        }
+        extrusion(slop = 1);
+       
+        //roller 
+        hull(){
+            translate([roller_offset,-in/2-rod_rad,0]) cylinder(r=roller_rad, h=length*3, center=true);
+            translate([roller_offset-10,-in/2-rod_rad+20,0]) cylinder(r=roller_rad, h=length*3, center=true);
+        }
+    }
+}
+
+//this mounts the print cooling fan onto the hotend cooling fan - friction-adjust the fan angle.
+module fan_mount(){
+    screw_sep = 24;
+    cooling_fan_w = 15.25;
+    fan_lift = wall*2.5;
+    
+    difference(){
+        union(){
+            //offset lugs
+            for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,-wall]) hull(){
+                cylinder(r=screw_rad+wall, h=wall+.1, $fn=6);
+                 translate([0,0,wall]) cylinder(r=screw_rad+wall/2, h=wall, $fn=6);
+            }
+            //fan bar & mount
+            hull() for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,0]){
+                cylinder(r=screw_rad+wall/2, h=wall, $fn=6);
+                
+                
+                translate([-wall,0,fan_lift]) rotate([0,90,0]) cylinder(r=screw_rad+wall, h=wall, $fn=6);
+            }
+        }
+        
+        for(i=[0,1]) mirror([i,0,0]) translate([screw_sep/2,0,-.1]){
+            cylinder(r=screw_rad, h=wall*5, center=true);
+            translate([0,0,.3]) cylinder(r=nut_rad, h=wall*5);
+            
+            translate([-wall,0,fan_lift]) rotate([0,90,0]) cylinder(r=nut_rad, h=wall*3, $fn=6);
+        }
+        
+        //fan
+        translate([0,0,wall+24.5]) cube([cooling_fan_w, 50,50], center=true);
+        
+        //fan screw
+        translate([0,0,fan_lift]) rotate([0,90,0]) cylinder(r=screw_rad, h=50, center=true);
+    }
+}
 
 module rod_mount(extrusion=false){
     screw_sep = 15;
